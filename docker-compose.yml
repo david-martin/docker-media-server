@@ -1,0 +1,34 @@
+# TODO: volumes
+plex: # docker run -d -h *your_host_name*  -p 32400:32400  plex
+  image: timhaak/plex
+  volumes:
+    - ./config:/config    # /config/logs/supervisor
+    - ./data:/data
+  ports:
+    - "32400:32400"
+sabnzbd: # docker run -d -h *your_host_name* -v /*your_config_location*:/config -v /*your_videos_location*:/data -p 8080:8080 --restart=always sabnzbd
+  image: timhaak/sabnzbd
+  restart: always
+  volumes:
+    - ./config/sabnzbd.ini:/config    # --config-file /config
+    - ./data:/data
+  ports:
+    - "8080:8080"
+sickbeard: # docker run -d -h your_host_name -v /your_config_location:/config -v /your_videos_location:/data -p 8081:8081 sickbeard
+  image: timhaak/sickbeard
+  volumes:
+    - ./config:/config    # /config/config.ini  /config/sickbeard.db
+    - ./data:/data
+  ports:
+    - "8081:8081"
+  links:
+    - sabnzbd
+couchpotato: # docker run -d -h your_host_name -v /your_config_location:/config -v /your_videos_location:/data -p 5050:5050 --name couchpotato couchpotato
+  image: timhaak/couchpotato
+  volumes:
+    - ./config:/config    # /config/CouchPotato.cfg
+    - ./data:/data
+  ports:
+    - "5050:5050"
+  links:
+    - sabnzbd
